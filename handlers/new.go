@@ -11,11 +11,13 @@ import (
 	"net/http"
 	"path"
 	"strconv"
+	"strings"
 
 	"github.com/coreos/go-etcd/etcd"
 )
 
 var baseURI = flag.String("host", "https://discovery.etcd.io", "base location for computed token URI")
+var etcdCluster = flag.String("etcd", "http://127.0.0.1:4001", "etcd cluster")
 
 func generateCluster() string {
 	b := make([]byte, 16)
@@ -33,7 +35,11 @@ func setupToken(size int) (string, error) {
 		return "", errors.New("Couldn't generate a token")
 	}
 
-	client := etcd.NewClient(nil)
+	// etcd cluster is passed in via commandline option -etcd
+	machines := strings.Split((*etcdCluster), ",")
+	log.Printf("etcd cluster: %v", machines)
+
+	client := etcd.NewClient(machines)
 	key := path.Join("_etcd", "registry", token)
 	resp, err := client.CreateDir(key, 0)
 

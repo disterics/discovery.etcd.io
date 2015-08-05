@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/coreos/discovery.etcd.io/pkg/lockstring"
 )
@@ -18,16 +19,31 @@ var (
 )
 
 func init() {
-	currentLeader.Set("127.0.0.1:4001")
+	// etcd cluster is passed in via commandline option -etcd
+	//currentLeader.Set("127.0.0.1:4001")
 }
 
 func proxyRequest(r *http.Request) (*http.Response, error) {
 	body, _ := ioutil.ReadAll(r.Body)
 
+	machines := strings.Split((*etcdCluster), ",")
+
 	for i := 0; i <= 10; i++ {
+
+		if i == 0 {
+			log.Printf("etcd initial leader: %v", machines[i])
+			currentLeader.Set(machines[i])
+		}
+
+		leader := currentLeader.String();
+		lurl, err := url.Parse(leader)
+		if err != nil {
+			return nil, err
+		}
+
 		u := url.URL{
-			Scheme: "http",
-			Host: currentLeader.String(),
+			Scheme: lurl.Scheme,
+			Host: lurl.Host,
 			Path: path.Join("v2", "keys", "_etcd", "registry", r.URL.Path),
 			RawQuery: r.URL.RawQuery,
 		}
@@ -43,6 +59,11 @@ func proxyRequest(r *http.Request) (*http.Response, error) {
 		client := http.Client{}
 		resp, err := client.Do(outreq)
 		if err != nil {
+			if i < len(machines) {
+				log.Printf("etcd leader: %v", machines[i])
+				currentLeader.Set(machines[i])
+				continue
+			}
 			return nil, err
 		}
 
@@ -77,6 +98,7 @@ func TokenHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error making request: %v", err)
 		http.Error(w, "", 500)
+		return
 	}
 
 	copyHeader(w.Header(), resp.Header)
