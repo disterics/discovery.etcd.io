@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -e -x
 # build discovery statically for the docker container, then build the container
 
 cat >.payload <<EOF
@@ -8,8 +8,11 @@ CGO_ENABLED=0 go run third_party.go build -a -tags netgo --ldflags '-w -extldfla
 EOF
 
 echo "building statically-linked discovery.etcd.io..."
-docker run --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp golang:latest bash .payload
+tar cvzf - handlers http pkg third_party discovery.go third_party.go .payload | ssh -i ~/.vagrant.d/insecure_private_key core@192.168.56.100 "cat - | tar xzvf - -C /home/core/"
+#docker run --rm -v "$PWD":/usr/src/myapp -w /usr/src/myapp golang:latest bash .payload
+docker run --rm -v /home/core:/usr/src/myapp -w /usr/src/myapp golang:latest bash .payload
 rm -f .payload
+scp -r -i ~/.vagrant.d/insecure_private_key core@192.168.56.100:/home/core/bin/ .
 
 echo "building docker container..."
 docker build .
