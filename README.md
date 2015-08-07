@@ -10,17 +10,29 @@ https://github.com/coreos/etcd/blob/master/Documentation/clustering.md#public-et
 You may run the etcd cluster in a docker container for discovery service:
 
 ```
-TOKEN=`curl -X PUT https://discovery.etcd.io/new?size=3`
-docker pull quay.io/coreos/etcd:v0.4.6
-docker run -d -p 4001:4001 -p 7001:7001 -v /usr/share/ca-certificates:/etc/ssl/certs \
-  --name etcd-01 quay.io/coreos/etcd:v0.4.6 \
-  -addr 172.17.42.1:4001 -peer-addr 172.17.42.1:7001 -discovery $TOKEN
-docker run -d -p 5001:5001 -p 8001:8001 -v /usr/share/ca-certificates:/etc/ssl/certs \
-  --name etcd-02 quay.io/coreos/etcd:v0.4.6 \
-  -addr 172.17.42.1:5001 -peer-addr 172.17.42.1:8001 -discovery $TOKEN
-docker run -d -p 6001:6001 -p 9001:9001 -v /usr/share/ca-certificates:/etc/ssl/certs \
-  --name etcd-03 quay.io/coreos/etcd:v0.4.6 \
-  -addr 172.17.42.1:6001 -peer-addr 172.17.42.1:9001 -discovery $TOKEN
+export DISCOVERY_URL=`curl -X PUT https://discovery.etcd.io/new?size=3`
+docker pull quay.io/coreos/etcd:v2.0.10
+docker run -d -p 4001:4001 -p 2379:2379 -p 2380:2380 -v /usr/share/ca-certificates:/etc/ssl/certs \
+  --name etcd-01 quay.io/coreos/etcd:v2.0.10 -name etcd-01 \
+  -advertise-client-urls http://172.17.42.1:2379 \
+  -initial-advertise-peer-urls http://172.17.42.1:2380 \
+  -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
+  -listen-peer-urls http://0.0.0.0:2380 \
+  -discovery $DISCOVERY_URL
+docker run -d -p 5001:5001 -p 3379:3379 -p 3380:3380 -v /usr/share/ca-certificates:/etc/ssl/certs \
+  --name etcd-02 quay.io/coreos/etcd:v2.0.10 -name etcd-02 \
+  -advertise-client-urls http://172.17.42.1:3379 \
+  -initial-advertise-peer-urls http://172.17.42.1:3380 \
+  -listen-client-urls http://0.0.0.0:3379,http://0.0.0.0:5001 \
+  -listen-peer-urls http://0.0.0.0:3380 \
+  -discovery $DISCOVERY_URL
+docker run -d -p 6001:6001 -p 4379:4379 -p 4380:4380 -v /usr/share/ca-certificates:/etc/ssl/certs \
+  --name etcd-03 quay.io/coreos/etcd:v2.0.10 -name etcd-03 \
+  -advertise-client-urls http://172.17.42.1:4379 \
+  -initial-advertise-peer-urls http://172.17.42.1:4380 \
+  -listen-client-urls http://0.0.0.0:4379,http://0.0.0.0:6001 \
+  -listen-peer-urls http://0.0.0.0:4380 \
+  -discovery $DISCOVERY_URL
 ```
 
 You may run the etcd discovery in a docker container:
