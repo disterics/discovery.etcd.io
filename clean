@@ -1,0 +1,5 @@
+#!/bin/sh -ex
+
+rm -rf bin/
+rm -rf gopath/
+rm prox.exe

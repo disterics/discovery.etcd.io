@@ -1,4 +1,21 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 
-go run third_party.go install code.google.com/p/rsc/devweb
-GOPATH="${PWD}/third_party" PATH="${PATH}:${PWD}" ./bin/devweb -addr=":8087" github.com/coreos/discovery.etcd.io/dev
+ORG_PATH="github.com/coreos"
+REPO_PATH="${ORG_PATH}/discovery.etcd.io"
+
+export GOPATH=${PWD}/gopath
+
+rm -f $GOPATH/src/${REPO_PATH}
+mkdir -p $GOPATH/src/${ORG_PATH}
+ln -s ${PWD} $GOPATH/src/${REPO_PATH}
+
+eval $(go env)
+
+go get code.google.com/p/rsc/devweb
+go install code.google.com/p/rsc/devweb
+
+go get github.com/tools/godep
+godep restore
+
+export PATH=$PATH:${PWD}
+$GOPATH/bin/devweb -addr=":8087" github.com/coreos/discovery.etcd.io/dev

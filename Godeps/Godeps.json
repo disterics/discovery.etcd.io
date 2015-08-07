@@ -1,0 +1,35 @@
+{
+	"ImportPath": "_/Users/madhav/Workspace/Github/coreos/discovery.etcd.io",
+	"GoVersion": "go1.4.2",
+	"Packages": [
+		"github.com/coreos/discovery.etcd.io"
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/coreos/go-etcd/etcd",
+			"Comment": "v2.0.0-22-g9847b93",
+			"Rev": "9847b93751a5fbaf227b893d172cee0104ac6427"
+		},
+		{
+			"ImportPath": "github.com/coreos/go-systemd/activation",
+			"Comment": "v3-6-gcea488b",
+			"Rev": "cea488b4e6855fee89b6c22a811e3c5baca861b6"
+		},
+		{
+			"ImportPath": "github.com/gorilla/context",
+			"Rev": "215affda49addc4c8ef7e2534915df2c8c35c6cd"
+		},
+		{
+			"ImportPath": "github.com/gorilla/handlers",
+			"Rev": "8d15e1138fa414148ca497a280ff7d41046d619d"
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": "c3c5f0000f7b474738b08f34308c1e8a4060ce14"
+		},
+		{
+			"ImportPath": "github.com/ugorji/go/codec",
+			"Rev": "5abd4e96a45c386928ed2ca2a7ef63e2533e18ec"
+		}
+	]
+}

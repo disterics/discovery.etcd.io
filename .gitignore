@@ -1,6 +1,4 @@
-/third_party/pkg
-/prox.exe
-devweb
-discovery.etcd.io
-go
-gofmt
+
+gopath
+prox.exe
+bin
