@@ -12,9 +12,12 @@ You need to run etcd cluster for etcd discovery, follow the instructions from li
 https://github.com/coreos/etcd/blob/master/Documentation/docker_guide.md
 
 You may run the etcd discovery in a docker container:
+
+Use 'madharjan/discovery.etcd.io' [![Docker Repository on Quay](https://quay.io/repository/madharjan/discovery.etcd.io/status "Docker Repository on Quay")](https://quay.io/repository/madharjan/discovery.etcd.io) until coreos/discovery.etcd.io is updated with -etcd commandline
+
 ```
-docker pull quay.io/coreos/discovery.etcd.io
-docker run -d -p 8080:8087 --name etcd-discovery quay.io/coreos/discovery.etcd.io -addr :8087 -host http://localhost:8080 \
+docker pull madharjan/discovery.etcd.io
+docker run -d -p 8080:8087 --name etcd-discovery madharjan/discovery.etcd.io -addr :8087 -host http://localhost:8080 \
   -etcd http://172.17.42.1:4001,http://172.17.42.1:5001,http://172.17.42.1:6001
 ```
 
