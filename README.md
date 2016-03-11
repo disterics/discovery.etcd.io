@@ -13,7 +13,7 @@ https://github.com/coreos/etcd/blob/master/Documentation/docker_guide.md
 
 You may run the etcd discovery in a docker container:
 
-Use 'madharjan/discovery.etcd.io' [![Docker Repository on Quay](https://quay.io/repository/madharjan/discovery.etcd.io/status "Docker Repository on Quay")](https://quay.io/repository/madharjan/discovery.etcd.io) until coreos/discovery.etcd.io is updated with -etcd commandline
+Use 'madharjan/discovery.etcd.io' until coreos/discovery.etcd.io is updated with -etcd commandline
 
 ```
 docker pull madharjan/discovery.etcd.io
